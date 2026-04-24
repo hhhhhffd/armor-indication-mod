@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "armor_indication",
+  "version": "${version}",
+  "name": "Armor Indication",
+  "description": "Client-side Fabric mod for Minecraft 1.21.4 that replaces netherite armor slot icons in handled GUI screens based on enchantments.",
+  "authors": [
+    "Codex"
+  ],
+  "license": "All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "armorindication.ArmorIndicationClient"
+    ]
+  },
+  "mixins": [
+    "armor_indication.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": ">=0.119.4+1.21.4"
+  }
+}

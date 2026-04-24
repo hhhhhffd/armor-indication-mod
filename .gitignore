@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+
+# IDE Files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+out/
+bin/
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+
+# Logs and Runtime
+*.log
+run/
+logs/
+usercache.json
+banned-ips.json
+banned-players.json
+ops.json
+whitelist.json
