@@ -55,8 +55,3 @@ The compiled `.jar` will be available in the `build/libs/` directory.
 ### Environment & Usage
 Drop the compiled `.jar` into your Minecraft `.minecraft/mods` folder. No special configurations or environment variables are required, as this is a purely client-side rendering enhancement. 
 *(Note: If integrating external analytics or configuration databases in future iterations, ensure `postgres` is used as the default DB host in configurations as per architecture standards).*
-
-## 5. Deliverables & Links
-- [Demo Video / Pitch](#)
-- [Presentation](#)
-- [Live Demo](#) - *Available as a Modrinth/CurseForge download*
