@@ -1,57 +1,56 @@
-# Armor Indication
+<div align="center">
 
-## 1. Executive Summary
-Armor Indication is a client-side Minecraft Fabric mod designed to enhance the visual feedback of Netherite armor items within handled GUI screens. By intercepting vanilla rendering calls, it dynamically swaps armor slot icons based on their current enchantments (e.g., distinguishing items with and without Mending). This solves the problem of visual ambiguity in late-game inventory management without altering core game mechanics or server state.
+<h1>Armor Indication</h1>
+<hr>
 
-## 2. Technical Stack
-- **Core Environment:** Minecraft 1.21.4, Java 21
-- **Modding API:** Fabric Loader (>=0.16.10), Fabric API
-- **Code Injection:** SpongePowered Mixin
-- **Build System:** Gradle (Fabric Loom)
+**Client-side Fabric mod that marks netherite armor slots by enchantment in inventory screens**
 
-## 3. Architecture Deep Dive
-The system is built on a non-destructive injection pattern. Instead of overriding entire GUI classes, it uses targeted Mixins to intercept specific rendering methods within the `HandledScreen` lifecycle.
+![Minecraft](https://img.shields.io/badge/MINECRAFT-1.21.4-62B47A?style=flat-square&logo=minecraft&logoColor=white)
+![Fabric](https://img.shields.io/badge/FABRIC_LOADER-0.16.10-DBD0B4?style=flat-square)
+![Java](https://img.shields.io/badge/JAVA-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![License](https://img.shields.io/github/license/hhhhhffd/armor-indication-mod?style=flat-square)
 
-```mermaid
-sequenceDiagram
-    participant Vanilla as Minecraft HandledScreen
-    participant Mixin as HandledScreenMixin
-    participant Util as NetheriteArmorEnchantmentUtil
-    participant Texture as NetheriteArmorTextureManager
-    
-    Vanilla->>Mixin: Call drawSlot (which invokes drawItem)
-    Mixin->>Util: resolveTextureVariant(ItemStack)
-    Util-->>Mixin: return ArmorTextureVariant (SPECIAL / MENDING / NONE)
-    Mixin->>Texture: getReplacementTexture(ItemStack, Variant)
-    alt Is Eligible for Custom Texture
-        Texture-->>Mixin: return Optional.of(Identifier)
-        Mixin->>Vanilla: context.drawTexture() (Custom Icon)
-        Mixin-->>Vanilla: Skip vanilla drawItem call
-    else Not Eligible
-        Texture-->>Mixin: return Optional.empty()
-        Mixin->>Vanilla: Proceed with original vanilla drawItem
-    end
-```
+[Build](#build) · [Install](#install) · [License](#license)
 
-### Architecture Decision Records (ADR)
-- **Sponge Mixins over Coremods:** Mixins were chosen for bytecode manipulation as they provide a safe, compatible, and maintainable way to alter `HandledScreen` rendering logic without completely overwriting vanilla methods, maximizing compatibility with other client-side GUI mods.
-- **Separation of Concerns (Logic vs. Render):** The decision to separate `NetheriteArmorEnchantmentUtil` (rule evaluation) from `NetheriteArmorTextureManager` (resource lookup) ensures that complex enchantment permutations can be unit-tested in isolation without loading the OpenGL render context.
-- **Redirect Injections (`@Redirect`):** Redirects were chosen over `@Inject(cancellable = true)` to surgically intercept `drawItem` and `drawItemWithoutEntity` within the exact scope of `drawSlot`, ensuring that overlay logic (durability bars, stack counts) remains entirely handled by vanilla code.
+</div>
 
-## 4. Setup & Deployment
-### Prerequisites
-- Java 21 JDK
-- Git
+> [!NOTE]
+> Archived — no longer maintained.
 
-### Build Instructions
-To compile the mod locally:
+## What it is
+
+Armor Indication replaces the icons of netherite armor pieces in container and inventory screens depending on their enchantments, for example telling apart pieces with and without Mending. It only changes how slots are drawn; game mechanics and server state are untouched. No release was published; build the JAR from source.
+
+## How it works
+
+A Mixin into `HandledScreen` redirects the `drawItem` calls made inside `drawSlot`. `NetheriteArmorEnchantmentUtil` resolves a variant (`SPECIAL`, `MENDING` or `NONE`) from the stack's enchantments, and `NetheriteArmorTextureManager` returns a replacement texture for it. If none applies, the vanilla call runs, so durability bars and stack counts stay vanilla. Textures for helmet, chestplate, leggings and boots (`_special` and `_special_mending`) are in `src/main/resources/assets/armor_indication/textures/item/`.
+
+## Stack
+
+| Part | Version |
+| --- | --- |
+| Minecraft | 1.21.4 |
+| Fabric Loader | >= 0.16.10 |
+| Fabric API | >= 0.119.4+1.21.4 |
+| Java | 21 |
+| Mod version | 1.0.0 |
+| Code injection | SpongePowered Mixin |
+| Build | Gradle, Fabric Loom 1.9.2 |
+
+## Build
+
 ```bash
-git clone https://github.com/your-username/armor-indication.git
-cd armor-indication
+git clone https://github.com/hhhhhffd/armor-indication-mod.git
+cd armor-indication-mod
 ./gradlew build
 ```
-The compiled `.jar` will be available in the `build/libs/` directory.
 
-### Environment & Usage
-Drop the compiled `.jar` into your Minecraft `.minecraft/mods` folder. No special configurations or environment variables are required, as this is a purely client-side rendering enhancement. 
-*(Note: If integrating external analytics or configuration databases in future iterations, ensure `postgres` is used as the default DB host in configurations as per architecture standards).*
+The JAR is written to `build/libs/`.
+
+## Install
+
+Put the JAR and Fabric API into the `mods` folder of your Minecraft 1.21.4 profile. The mod is client-side only and has no configuration.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
